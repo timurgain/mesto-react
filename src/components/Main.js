@@ -1,7 +1,8 @@
 import '../index.css'
 
 
-function Main() {
+function Main({onEditProfile, onAddPlace, onEditAvatar, ...props}) {
+
   return (
     <main className="content">
 
@@ -10,16 +11,23 @@ function Main() {
 
         <figure className="profile__figure">
 
-          <div className="profile__avatar" aria-label="Изображение пользователя"></div>
+          <div className="profile__avatar"
+               onClick={onEditAvatar}
+               aria-label="Изображение пользователя"></div>
           <figcaption className="profile__caption">
 
             <h1 className="profile__name">Имя</h1>
-            <button className="profile__edit-btn" type="button" aria-label="Кнопка редактирования профиля пользователя"></button>
+            <button className="profile__edit-btn"
+                    onClick={onEditProfile}
+                    type="button"
+                    aria-label="Кнопка редактирования профиля пользователя"></button>
             <p className="profile__description">Описание</p>
           </figcaption>
         </figure>
 
-        <button className="profile__add-btn" type="button"></button>
+        <button className="profile__add-btn"
+                type="button"
+                onClick={onAddPlace}></button>
       </section>
 
       {/* <!-- Elements section --> */}
