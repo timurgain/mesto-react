@@ -1,54 +1,67 @@
-import '../index.css'
+import React from 'react';
+import '../index.css';
+import defaultAvatarPath from '../images/kusto.jpg';
+import api from '../utils/api.js';
+import Card from './Card';
 
 
 function Main({onEditProfile, onAddPlace, onEditAvatar, ...props}) {
+
+  const [userName, setUserName] = React.useState('Имя');
+  const [userDescription, setUserDescription] = React.useState('Описание');
+  const [userAvatar, setUserAvatar] = React.useState(defaultAvatarPath);
+  const [cards, setCards] = React.useState([]);
+
+  // initial fetch info from the server
+  React.useEffect(() => {
+    Promise.all([api.getUserMe(), api.getCards()])
+      .then(([userData, cardsData]) => {
+        setUserName(userData.name);
+        setUserDescription(userData.about);
+        setUserAvatar(userData.avatar);
+        console.log(cardsData);
+        setCards(cardsData);
+      })
+      .catch(err => reportError(err))
+  }, [])
+
+  function renderCards() {
+    return cards.map((card) => {
+      return <Card id={card._id} link={card.link} name={card.name} likesNumber={card.likes.length} />
+    })
+  }
 
   return (
     <main className="content">
 
       {/* <!-- Profile section --> */}
       <section className="profile" aria-label="Профиль пользователя">
-
         <figure className="profile__figure">
-
           <div className="profile__avatar"
+               style={{backgroundImage: `url(${userAvatar})`}}
                onClick={onEditAvatar}
-               aria-label="Изображение пользователя"></div>
-          <figcaption className="profile__caption">
+               aria-label="Изображение пользователя" />
 
-            <h1 className="profile__name">Имя</h1>
-            <button className="profile__edit-btn"
+          <figcaption className="profile__caption">
+            <h1 className="profile__name">{userName}</h1>
+            <button className="profile__edit-btn" type="button"
                     onClick={onEditProfile}
-                    type="button"
-                    aria-label="Кнопка редактирования профиля пользователя"></button>
-            <p className="profile__description">Описание</p>
+                    aria-label="Кнопка редактирования профиля пользователя" />
+            <p className="profile__description">{userDescription}</p>
           </figcaption>
         </figure>
 
-        <button className="profile__add-btn"
-                type="button"
-                onClick={onAddPlace}></button>
+        <button className="profile__add-btn" type="button"
+                onClick={onAddPlace} />
       </section>
 
-      {/* <!-- Elements section --> */}
+      {/* <!-- Cards section --> */}
       <section className="elements" aria-label="Места пользователя">
-
         <ul className="elements__cards">
-
-          <template id="card">
-            <li><figure className="card">
-              <img className="card__image" src="#" alt="-"/>
-              <button className="card__trash-btn" type="button" aria-label="Кнопка удалить"></button>
-              <figcaption className="card__caption">
-                <h2 className="card__header"></h2>
-                <button className="card__like-btn" type="button" aria-label="Кнопка лайк"></button>
-                <span className="card__like-counter">0</span>
-              </figcaption>
-            </figure></li>
-          </template>
-
+          {renderCards()}
         </ul>
       </section>
+
     </main>
   )
 }
