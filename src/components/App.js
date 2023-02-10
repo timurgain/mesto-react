@@ -2,7 +2,7 @@ import Header from './Header.js'
 import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
-import PopupImage from './PopupImage.js';
+import ImagePopup from './ImagePopup.js';
 import PopupConfirm from './PopupConfirm.js';
 
 import React from 'react';
@@ -50,7 +50,6 @@ function App() {
 
   function handleCardClick(card) {
     setSelectedCard(card);
-    console.log(selectedCard)
   }
 
   function closeAllPopups() {
@@ -85,7 +84,7 @@ function App() {
         </PopupWithForm>}
 
       {!!selectedCard &&
-        <PopupImage card={selectedCard} onClose={handleClickClose}/>}
+        <ImagePopup card={selectedCard} onClose={handleClickClose}/>}
 
       {/* popup confirm a card deletion */}
       <PopupConfirm />

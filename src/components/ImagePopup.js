@@ -1,6 +1,6 @@
 import '../index.css';
 
-function PopupImage({card, onClose, ...props}) {
+function ImagePopup({card, onClose, ...props}) {
   return (
     <div className='popup card-popup popup_opened'
          aria-label="Окно просмотра фото"
@@ -17,4 +17,4 @@ function PopupImage({card, onClose, ...props}) {
 }
 
 
-export default PopupImage
+export default ImagePopup
