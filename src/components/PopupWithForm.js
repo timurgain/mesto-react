@@ -1,10 +1,10 @@
 import '../index.css';
 import React from 'react';
 
-function PopupWithForm({name, title, saveBtnText, isOpen, onClose, ...props}) {
+function PopupWithForm({name, title, saveBtnText, onClose, ...props}) {
 
   return (
-    <div className={isOpen ? `popup popup_type_${name} popup_opened` : `popup popup_type_${name}`}
+    <div className={`popup popup_type_${name} popup_opened`}
          aria-label={title}
          onMouseDown={onClose}>
         <div className={`popup__container popup__container_type_${name}`}>

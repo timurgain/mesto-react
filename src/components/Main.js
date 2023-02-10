@@ -5,7 +5,7 @@ import api from '../utils/api.js';
 import Card from './Card';
 
 
-function Main({onEditProfile, onAddPlace, onEditAvatar, ...props}) {
+function Main({onEditProfile, onAddPlace, onEditAvatar, handleCardClick, ...props}) {
 
   const [userName, setUserName] = React.useState('Имя');
   const [userDescription, setUserDescription] = React.useState('Описание');
@@ -19,16 +19,13 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, ...props}) {
         setUserName(userData.name);
         setUserDescription(userData.about);
         setUserAvatar(userData.avatar);
-        console.log(cardsData);
         setCards(cardsData);
       })
       .catch(err => reportError(err))
   }, [])
 
   function renderCards() {
-    return cards.map((card) => {
-      return <Card id={card._id} link={card.link} name={card.name} likesNumber={card.likes.length} />
-    })
+    return cards.map(card => <Card key={card._id} card={card} onCardClick={handleCardClick} />)
   }
 
   return (

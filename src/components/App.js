@@ -8,15 +8,19 @@ import PopupConfirm from './PopupConfirm.js';
 import React from 'react';
 import '../index.css';
 
+import {popupProfileChildren, popupAvatarChildren, popupPlaceChildren} from './constants.js'
+
+
 function App() {
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const statesArr = [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen];
+  const [selectedCard, setSelectedCard] = React.useState(null);
+  const statesArr = [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen, selectedCard];
 
   React.useEffect(() => {
-    if (statesArr.some(state => state === true)) {
+    if (statesArr.some(state => !!state === true)) {
       document.addEventListener('keydown', handleEscClose);
     }
     return () => {document.removeEventListener('keydown', handleEscClose)}
@@ -27,9 +31,9 @@ function App() {
   }
 
   function handleClickClose(evt) {
-    if (['popup', 'popup__close-btn'].some(
-      cls => Array.from(evt.target.classList).includes(cls)
-      )) {closeAllPopups()}
+    if (['popup', 'popup__close-btn'].some(cls => Array.from(evt.target.classList).includes(cls))) {
+        closeAllPopups()
+      }
   }
 
   function handleEditAvatarClick() {
@@ -44,69 +48,46 @@ function App() {
     setIsAddPlacePopupOpen(!isAddPlacePopupOpen)
   }
 
+  function handleCardClick(card) {
+    setSelectedCard(card);
+    console.log(selectedCard)
+  }
+
   function closeAllPopups() {
       setIsEditProfilePopupOpen(false);
       setIsAddPlacePopupOpen(false);
       setIsEditAvatarPopupOpen(false);
+      setSelectedCard(null);
   };
 
   return (
     <>
       <Header />
+
       <Main onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick} />
+            onEditAvatar={handleEditAvatarClick}
+            handleCardClick={handleCardClick} />
 
-      {/* profile */}
-      <PopupWithForm name="profile" title="Редактировать профиль"
-                     saveBtnText="Сохранить"
-                     isOpen={isEditProfilePopupOpen}
-                     onClose={handleClickClose}>
-        {/* props.children */}
-        <div className="popup__field">
-          <input className="popup__input" name="name" type="text"
-            required minLength="2" maxLength="40" />
-          <span className="popup__error"></span>
-        </div>
-        <div className="popup__field">
-          <input className="popup__input" name="description" type="text"
-            required minLength="2" maxLength="200" />
-          <span className="popup__error"></span>
-        </div>
-      </PopupWithForm>
+      {isEditProfilePopupOpen &&
+        <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить" onClose={handleClickClose}>
+          {popupProfileChildren}
+        </PopupWithForm>}
 
-      {/* avatar */}
-      <PopupWithForm name="avatar" title="Обновить аватар"
-                     saveBtnText="Сохранить"
-                     isOpen={isEditAvatarPopupOpen}
-                     onClose={handleClickClose}>
-        <div className="popup__field">
-          <input className="popup__input" name="link" type="url" placeholder="Ссылка на изображение" required />
-          <span className="popup__error"></span>
-        </div>
-      </PopupWithForm>
+      {isEditAvatarPopupOpen &&
+        <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить" onClose={handleClickClose}>
+          {popupAvatarChildren}
+        </PopupWithForm>}
 
-      {/* place */}
-      <PopupWithForm name="place" title="Новое место"
-                     saveBtnText="Создать"
-                     isOpen={isAddPlacePopupOpen}
-                     onClose={handleClickClose}>
-        <div className="popup__field">
-          <input className="popup__input" name="name" type="text" placeholder="Название"
-            required minLength="2" maxLength="30" />
-          <span className="popup__error"></span>
-        </div>
-        <div className="popup__field">
-          <input className="popup__input" name="link" type="url" placeholder="Ссылка на картинку"
-            required />
-          <span className="popup__error"></span>
-        </div>
-      </PopupWithForm>
+      {isAddPlacePopupOpen &&
+        <PopupWithForm name="place" title="Новое место" saveBtnText="Создать" onClose={handleClickClose}>
+          {popupPlaceChildren}
+        </PopupWithForm>}
 
-      {/* view a card detail */}
-      <PopupImage />
+      {!!selectedCard &&
+        <PopupImage card={selectedCard} onClose={handleClickClose}/>}
 
-      {/* confirm a card deletion */}
+      {/* popup confirm a card deletion */}
       <PopupConfirm />
 
       <Footer />
