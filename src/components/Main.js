@@ -1,5 +1,4 @@
 import React from 'react';
-import '../index.css';
 import defaultAvatarPath from '../images/kusto.jpg';
 import api from '../utils/api.js';
 import Card from './Card';

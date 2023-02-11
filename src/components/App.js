@@ -6,7 +6,6 @@ import ImagePopup from './ImagePopup.js';
 import PopupConfirm from './PopupConfirm.js';
 
 import React from 'react';
-import '../index.css';
 
 import {popupProfileChildren, popupAvatarChildren, popupPlaceChildren} from './constants.js'
 
@@ -68,23 +67,25 @@ function App() {
             onEditAvatar={handleEditAvatarClick}
             handleCardClick={handleCardClick} />
 
-      {isEditProfilePopupOpen &&
-        <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить" onClose={handleClickClose}>
-          {popupProfileChildren}
-        </PopupWithForm>}
 
-      {isEditAvatarPopupOpen &&
-        <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить" onClose={handleClickClose}>
-          {popupAvatarChildren}
-        </PopupWithForm>}
+      <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
+                     onClose={handleClickClose} isOpen={isEditProfilePopupOpen}>
+        {popupProfileChildren}
+      </PopupWithForm>
 
-      {isAddPlacePopupOpen &&
-        <PopupWithForm name="place" title="Новое место" saveBtnText="Создать" onClose={handleClickClose}>
-          {popupPlaceChildren}
-        </PopupWithForm>}
+      <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить"
+                     onClose={handleClickClose} isOpen={isEditAvatarPopupOpen}>
+        {popupAvatarChildren}
+      </PopupWithForm>
 
-      {!!selectedCard &&
-        <ImagePopup card={selectedCard} onClose={handleClickClose}/>}
+
+      <PopupWithForm name="place" title="Новое место" saveBtnText="Создать"
+                     onClose={handleClickClose} isOpen={isAddPlacePopupOpen}>
+        {popupPlaceChildren}
+      </PopupWithForm>
+
+
+      <ImagePopup card={selectedCard} onClose={handleClickClose} />
 
       {/* popup confirm a card deletion */}
       <PopupConfirm />

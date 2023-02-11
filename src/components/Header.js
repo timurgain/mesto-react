@@ -1,5 +1,4 @@
 import logoPath from '../images/logo-mesto.svg';
-import '../index.css';
 
 
 function Header() {
