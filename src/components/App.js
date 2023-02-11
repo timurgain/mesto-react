@@ -3,7 +3,6 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
-import PopupConfirm from './PopupConfirm.js';
 
 import React from 'react';
 
@@ -16,6 +15,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
+
   const statesArr = [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen, selectedCard];
 
   React.useEffect(() => {
@@ -78,17 +78,16 @@ function App() {
         {popupAvatarChildren}
       </PopupWithForm>
 
-
       <PopupWithForm name="place" title="Новое место" saveBtnText="Создать"
                      onClose={handleClickClose} isOpen={isAddPlacePopupOpen}>
         {popupPlaceChildren}
       </PopupWithForm>
 
-
       <ImagePopup card={selectedCard} onClose={handleClickClose} />
 
-      {/* popup confirm a card deletion */}
-      <PopupConfirm />
+      {/* popup confirm a card deletion, doesnt work for now */}
+      <PopupWithForm name="confirm" title="Вы уверены?" saveBtnText="Да"
+                     onClose={handleClickClose} isOpen={false} />
 
       <Footer />
     </>

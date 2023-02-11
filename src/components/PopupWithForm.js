@@ -8,8 +8,8 @@ function PopupWithForm({name, title, saveBtnText, isOpen, onClose, ...props}) {
          onMouseDown={onClose}>
         <div className={`popup__container popup__container_type_${name}`}>
           <button className="popup__close-btn" type="button" />
-          <h2 className="popup__header">{title}</h2>
-          <form className="popup__form" name={name} action="#" noValidate>
+          <h2 className={`popup__header popup__header_type_${name}`}>{title}</h2>
+          <form className={`popup__form popup__form_type_${name}`} name={name} action="#">
 
             {props.children}
 
