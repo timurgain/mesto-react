@@ -15,8 +15,7 @@ class Api {
   // User
   getUserMe() {
     this._options.method = 'GET';
-    return fetch(`${this._baseUrl}/users/me`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/users/me`)
   }
 
   patchUserMe(name, about) {
@@ -25,8 +24,7 @@ class Api {
       name: name,
       about: about
     })
-    return fetch(`${this._baseUrl}/users/me`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/users/me`)
   }
 
   patchUserMeAvatar(url) {
@@ -34,15 +32,13 @@ class Api {
     this._options.body = JSON.stringify({
       avatar: url
     })
-    return fetch(`${this._baseUrl}/users/me/avatar`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/users/me/avatar`)
   }
 
   // Cards
   getCards() {
     this._options.method = 'GET';
-    return fetch(`${this._baseUrl}/cards`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/cards`)
   }
 
   postCard(link, name) {
@@ -51,27 +47,27 @@ class Api {
       name: name,
       link: link
     })
-    return fetch(`${this._baseUrl}/cards`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/cards`)
   }
 
   deleteCard(cardId) {
     this._options.method = 'DELETE';
-    return fetch(`${this._baseUrl}/cards/${cardId}`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/cards/${cardId}`)
   }
 
   // Likes
   putLike(cardId) {
     this._options.method = 'PUT';
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/cards/${cardId}/likes`)
   }
 
   deleteLike(cardId) {
     this._options.method = 'DELETE';
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, this._options)
-            .then(response => this._convertResponseToJson(response))
+    return this._request(`${this._baseUrl}/cards/${cardId}/likes`)
+  }
+
+  _request(url) {
+    return fetch(url, this._options).then(response => this._convertResponseToJson(response))
   }
 
   _convertResponseToJson(response) {
