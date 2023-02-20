@@ -3,6 +3,8 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
+import api from '../utils/api.js';
+import { CurrentUserContext, defaultUser } from '../contexts/CurrentUserContext.js';
 
 import React from 'react';
 
@@ -15,19 +17,26 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
-
-  const statesArr = [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen, selectedCard];
+  const [currentUser, setCurrentUser] = React.useState(defaultUser);
 
   React.useEffect(() => {
-    if (statesArr.some(state => !!state === true)) {
+    api.getUserMe()
+      .then((userData) => {setCurrentUser(userData)})
+      .catch(err => reportError(err))
+  }, [])
+
+  const isPopupOpen = isEditProfilePopupOpen || isAddPlacePopupOpen || isEditAvatarPopupOpen || !!selectedCard;
+
+  React.useEffect(() => {
+    function handleEscClose(evt) {
+      if (evt.key === 'Escape') {closeAllPopups()}
+    }
+
+    if (isPopupOpen) {
       document.addEventListener('keydown', handleEscClose);
     }
     return () => {document.removeEventListener('keydown', handleEscClose)}
-  }, statesArr)
-
-  function handleEscClose(evt) {
-    if (evt.key === 'Escape') {closeAllPopups()}
-  }
+  }, [isPopupOpen])
 
   function handleClickClose(evt) {
     if (['popup', 'popup__close-btn'].some(cls => Array.from(evt.target.classList).includes(cls))) {
@@ -59,38 +68,39 @@ function App() {
   };
 
   return (
-    <>
-      <Header />
+      <CurrentUserContext.Provider value={currentUser}>
 
-      <Main onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            handleCardClick={handleCardClick} />
+        <Header />
+        <Main onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              handleCardClick={handleCardClick} />
 
 
-      <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
-                     onClose={handleClickClose} isOpen={isEditProfilePopupOpen}>
-        {popupProfileChildren}
-      </PopupWithForm>
+        <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
+                      onClose={handleClickClose} isOpen={isEditProfilePopupOpen}>
+          {popupProfileChildren}
+        </PopupWithForm>
 
-      <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить"
-                     onClose={handleClickClose} isOpen={isEditAvatarPopupOpen}>
-        {popupAvatarChildren}
-      </PopupWithForm>
+        <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить"
+                      onClose={handleClickClose} isOpen={isEditAvatarPopupOpen}>
+          {popupAvatarChildren}
+        </PopupWithForm>
 
-      <PopupWithForm name="place" title="Новое место" saveBtnText="Создать"
-                     onClose={handleClickClose} isOpen={isAddPlacePopupOpen}>
-        {popupPlaceChildren}
-      </PopupWithForm>
+        <PopupWithForm name="place" title="Новое место" saveBtnText="Создать"
+                      onClose={handleClickClose} isOpen={isAddPlacePopupOpen}>
+          {popupPlaceChildren}
+        </PopupWithForm>
 
-      <ImagePopup card={selectedCard} onClose={handleClickClose} />
+        <ImagePopup card={selectedCard} onClose={handleClickClose} />
 
-      {/* popup confirm a card deletion, doesnt work for now */}
-      <PopupWithForm name="confirm" title="Вы уверены?" saveBtnText="Да"
-                     onClose={handleClickClose} isOpen={false} />
+        {/* popup confirm a card deletion, doesnt work for now */}
+        <PopupWithForm name="confirm" title="Вы уверены?" saveBtnText="Да"
+                      onClose={handleClickClose} isOpen={false} />
 
-      <Footer />
-    </>
+        <Footer />
+
+      </CurrentUserContext.Provider>
   );
 }
 
