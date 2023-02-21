@@ -1,29 +1,18 @@
 import React from 'react';
-import api from '../utils/api.js';
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 
-function Main({onEditProfile, onAddPlace, onEditAvatar, handleCardClick, ...props}) {
-  const [cards, setCards] = React.useState([]);
-
+function Main({cards, onEditProfile, onAddPlace, onEditAvatar,
+               handleCardClick, handleLikeClick, handleCardDelete, ...props}) {
   const currentUser = React.useContext(CurrentUserContext);
 
-  // initial fetch info from the server
-  React.useEffect(() => {
-    Promise.all([api.getUserMe(), api.getCards()])
-      .then(([userData, cardsData]) => {
-        setCards(cardsData);
-
-        // setUserName(userData.name);
-        // setUserDescription(userData.about);
-        // setUserAvatar(userData.avatar);
-      })
-      .catch(err => reportError(err))
-  }, [])
-
   function renderCards() {
-    return cards.map(card => <Card key={card._id} card={card} onCardClick={handleCardClick} />)
+    return cards.map((card) => {
+      return <Card key={card._id} card={card}
+                   onCardClick={handleCardClick}
+                   onLikeClick={handleLikeClick}
+                   onTrashClick={handleCardDelete} />} )
   }
 
   return (

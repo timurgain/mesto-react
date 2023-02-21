@@ -18,10 +18,14 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState(defaultUser);
+  const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
-    api.getUserMe()
-      .then((userData) => {setCurrentUser(userData)})
+    Promise.all([api.getUserMe(), api.getCards()])
+      .then(([userData, cardsData]) => {
+        setCurrentUser(userData);
+        setCards(cardsData);
+      })
       .catch(err => reportError(err))
   }, [])
 
@@ -60,6 +64,29 @@ function App() {
     setSelectedCard(card);
   }
 
+  function handleLikeClick(card) {
+    const isLiked = card.likes.some(like => currentUser._id === like._id);
+    if (isLiked) {
+      api.deleteLike(card._id).then(updCard => updateCardsList(updCard)).catch(err => reportError(err));
+    } else {
+      api.putLike(card._id).then(updCard => updateCardsList(updCard)).catch(err => reportError(err));
+    }
+  }
+
+  function handleCardDelete(card) {
+    if (currentUser._id === card.owner._id) {
+      api.deleteCard(card._id).then(() => {cutCardsList(card)}).catch(err => reportError(err));
+    }
+  }
+
+  function updateCardsList(updCard) {
+    setCards( cards.map(card => card._id === updCard._id ? updCard : card) )
+  }
+
+  function cutCardsList(cutCard) {
+    setCards( cards.filter(card => card._id !== cutCard._id) )
+  }
+
   function closeAllPopups() {
       setIsEditProfilePopupOpen(false);
       setIsAddPlacePopupOpen(false);
@@ -71,10 +98,13 @@ function App() {
       <CurrentUserContext.Provider value={currentUser}>
 
         <Header />
-        <Main onEditProfile={handleEditProfileClick}
+        <Main cards={cards}
+              onEditProfile={handleEditProfileClick}
               onAddPlace={handleAddPlaceClick}
               onEditAvatar={handleEditAvatarClick}
-              handleCardClick={handleCardClick} />
+              handleCardClick={handleCardClick}
+              handleLikeClick={handleLikeClick}
+              handleCardDelete={handleCardDelete} />
 
 
         <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
