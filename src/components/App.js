@@ -2,13 +2,14 @@ import Header from './Header.js'
 import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
+import EditProfilePopup from './EditProfilePopup.js';
 import ImagePopup from './ImagePopup.js';
 import api from '../utils/api.js';
 import { CurrentUserContext, defaultUser } from '../contexts/CurrentUserContext.js';
 
 import React from 'react';
 
-import {popupProfileChildren, popupAvatarChildren, popupPlaceChildren} from './constants.js'
+import { popupAvatarChildren, popupPlaceChildren } from './constants.js'
 
 
 function App() {
@@ -43,9 +44,8 @@ function App() {
   }, [isPopupOpen])
 
   function handleClickClose(evt) {
-    if (['popup', 'popup__close-btn'].some(cls => Array.from(evt.target.classList).includes(cls))) {
-        closeAllPopups()
-      }
+    const isClosing = ['popup', 'popup__close-btn'].some(cls => Array.from(evt.target.classList).includes(cls))
+    if (isClosing) {closeAllPopups()}
   }
 
   function handleEditAvatarClick() {
@@ -87,6 +87,13 @@ function App() {
     setCards( cards.filter(card => card._id !== cutCard._id) )
   }
 
+  function handleUpdateUser({name, about}) {
+    api.patchUserMe(name, about)
+      .then(updUser => setCurrentUser(updUser))
+      .catch(err => reportError(err));
+    closeAllPopups()
+  }
+
   function closeAllPopups() {
       setIsEditProfilePopupOpen(false);
       setIsAddPlacePopupOpen(false);
@@ -106,11 +113,9 @@ function App() {
               handleLikeClick={handleLikeClick}
               handleCardDelete={handleCardDelete} />
 
-
-        <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
-                      onClose={handleClickClose} isOpen={isEditProfilePopupOpen}>
-          {popupProfileChildren}
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen}
+                          onClose={handleClickClose}
+                          onUpdateUser={handleUpdateUser}/>
 
         <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить"
                       onClose={handleClickClose} isOpen={isEditAvatarPopupOpen}>
