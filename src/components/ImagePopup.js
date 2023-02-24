@@ -1,6 +1,7 @@
-function ImagePopup({card, onClose, ...props}) {
+function ImagePopup({isOpen, card, onClose, ...props}) {
+
   return (
-    <div className={!!card ? `popup card-popup popup_opened` : `popup card-popup`}
+    <div className={isOpen ? `popup card-popup popup_opened` : `popup card-popup`}
           aria-label="Окно просмотра фото"
           onMouseDown={onClose}>
       <figure className="popup__card">
