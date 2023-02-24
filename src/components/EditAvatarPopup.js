@@ -2,6 +2,8 @@ import React from "react";
 import PopupWithForm from './PopupWithForm.js';
 
 function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, ...props}) {
+
+  // the task required to use ref, not state
   const inputRef = React.useRef()
 
   function handleSubmit(evt) {

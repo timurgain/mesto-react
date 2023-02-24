@@ -24,21 +24,23 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, ...props}) {
 
   return (
     <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
-      isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
+                   isOpen={isOpen}
+                   onSubmit={handleSubmit}
+                   onClose={onClose} >
 
       <div className="popup__field">
         <input className="popup__input" name="name" type="text"
-          minLength="2" maxLength="40" required
-          value={name}
-          onChange={(evt) => {setName(evt.target.value)}} />
+               minLength="2" maxLength="40" required
+               value={name}
+               onChange={(evt) => {setName(evt.target.value)}} />
         <span className="popup__error"></span>
       </div>
 
       <div className="popup__field">
         <input className="popup__input" name="description" type="text"
-          minLength="2" maxLength="200" required
-          value={description}
-          onChange={(evt) => {setDescription(evt.target.value)}} />
+               minLength="2" maxLength="200" required
+               value={description}
+               onChange={(evt) => {setDescription(evt.target.value)}} />
         <span className="popup__error"></span>
       </div>
 

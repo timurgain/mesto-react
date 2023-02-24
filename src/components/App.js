@@ -4,13 +4,12 @@ import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js'
+import AddPlacePopup from './AddPlacePopup.js';
 import ImagePopup from './ImagePopup.js';
 import api from '../utils/api.js';
 import { CurrentUserContext, defaultUser } from '../contexts/CurrentUserContext.js';
 
 import React from 'react';
-
-import { popupPlaceChildren } from './constants.js'
 
 
 function App() {
@@ -102,6 +101,13 @@ function App() {
     closeAllPopups()
   }
 
+  function handleAddPlaceSubmit({link, name}) {
+    api.postCard(link, name)
+      .then(newCard => setCards([newCard, ...cards]))
+      .catch(err => reportError(err));
+    closeAllPopups()
+  }
+
   function closeAllPopups() {
       setIsEditProfilePopupOpen(false);
       setIsAddPlacePopupOpen(false);
@@ -129,10 +135,9 @@ function App() {
                          onUpdateAvatar={handleUpdateAvatar}
                          onClose={handleClickClose} />
 
-        <PopupWithForm name="place" title="Новое место" saveBtnText="Создать"
-                      onClose={handleClickClose} isOpen={isAddPlacePopupOpen}>
-          {popupPlaceChildren}
-        </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen}
+                       onAddPlace={handleAddPlaceSubmit}
+                       onClose={handleClickClose} />
 
         <ImagePopup card={selectedCard} onClose={handleClickClose} />
 
