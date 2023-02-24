@@ -5,16 +5,22 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, ...props}) {
 
   // the task required to use ref, not state
   const inputRef = React.useRef()
+  const [saveBtnText, setSaveBtnText] = React.useState('')
+
+  React.useEffect( () => {setSaveBtnText('Сохранить')}, [isOpen] )
 
   function handleSubmit(evt) {
+    setSaveBtnText('Сохраняю...');
     evt.preventDefault();
     onUpdateAvatar({
       avatarUrl: inputRef.current.value
-    })
+    });
+    inputRef.current.value = '';
   }
 
   return (
-    <PopupWithForm name="avatar" title="Обновить аватар" saveBtnText="Сохранить"
+    <PopupWithForm name="avatar" title="Обновить аватар"
+                   saveBtnText={saveBtnText}
                    isOpen={isOpen}
                    onClose={onClose}
                    onSubmit={handleSubmit} >

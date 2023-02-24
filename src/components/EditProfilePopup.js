@@ -8,6 +8,9 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, ...props}) {
 
   const [name, setName] = React.useState(currentUser.name);
   const [description, setDescription] = React.useState(currentUser.about);
+  const [saveBtnText, setSaveBtnText] = React.useState('Сохранить');
+
+  React.useEffect( () => {setSaveBtnText('Сохранить')}, [isOpen] )
 
   React.useEffect(() => {
     setName(currentUser.name);
@@ -15,6 +18,7 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, ...props}) {
   }, [currentUser, isOpen])
 
   function handleSubmit(evt) {
+    setSaveBtnText('Сохраняю...')
     evt.preventDefault();
     onUpdateUser({
       name: name,
@@ -23,7 +27,8 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, ...props}) {
   }
 
   return (
-    <PopupWithForm name="profile" title="Редактировать профиль" saveBtnText="Сохранить"
+    <PopupWithForm name="profile" title="Редактировать профиль"
+                   saveBtnText={saveBtnText}
                    isOpen={isOpen}
                    onSubmit={handleSubmit}
                    onClose={onClose} >
