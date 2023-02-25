@@ -7,9 +7,10 @@ function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
   const inputs = ['name', 'link']
   const [saveBtnText, setSaveBtnText] = React.useState('Создать');
 
-  const [values, setValues] = React.useState( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) );
-  const [errorMsgs, setErrorMsgs] = React.useState( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) );
-  const [isValid, setIsValid] = React.useState( inputs.reduce((obj, input) => {obj[input] = false; return obj}, {}) );
+  // tried to make state universal with reduce, but it can be easier - {input1: value1, input2: value2}
+  const [values, setValues] = React.useState( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
+  const [errorMsgs, setErrorMsgs] = React.useState( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
+  const [isValid, setIsValid] = React.useState( inputs.reduce((obj, input) => {return {...obj, [input]: false}}, {}) );
 
   const isFormValid = inputs.every( (input) => isValid[input] === true );
 
@@ -24,18 +25,19 @@ function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
     evt.preventDefault();
     setSaveBtnText('Сохраняю...')
 
-    // forwarded the data
+    // forwards the data
     onAddPlace({
       link: values.link,
       name: values.name
     });
 
-    // returned to initial state
+    // back to initial state
     setSaveBtnText('Создать');
-    setValues( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) );
-    setIsValid( inputs.reduce((obj, input) => {obj[input] = false; return obj}, {}) );
-    setErrorMsgs( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) )
+    setValues( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
+    setErrorMsgs( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
+    setIsValid( inputs.reduce((obj, input) => {return {...obj, [input]: false}}, {}) );
   }
+
 
   return(
     <PopupWithForm name="place" title="Новое место"
