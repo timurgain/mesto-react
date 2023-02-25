@@ -4,17 +4,17 @@ import PopupWithForm from "./PopupWithForm.js";
 
 function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
 
-  const [link, setLink] = React.useState('');
-  const [linkErrMsg, setLinkErrMsg] = React.useState('');
-  const [isLinkValid, setIsLinkValid] = React.useState(false);
-
   const [name, setName] = React.useState('');
   const [nameErrMsg, setNameErrMsg] = React.useState('');
   const [isNameValid, setIsNameValid] = React.useState(false);
 
+  const [link, setLink] = React.useState('');
+  const [linkErrMsg, setLinkErrMsg] = React.useState('');
+  const [isLinkValid, setIsLinkValid] = React.useState(false);
+
   const [saveBtnText, setSaveBtnText] = React.useState('Создать')
 
-  const isFormValid = isLinkValid && isNameValid
+  const isFormValid = isNameValid && isLinkValid
 
   React.useEffect(() => {
     setSaveBtnText('Создать');
@@ -58,25 +58,21 @@ function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
                    isValid={isFormValid}>
 
       <div className="popup__field">
-        <input className={`popup__input ${!!nameErrMsg ? `popup__input_type_error` : ``}`}
-               name="name" placeholder="Название"
-               type="text" minLength="2" maxLength="30" required
+        <input className={`popup__input ${nameErrMsg ? `popup__input_type_error` : ``}`}
                value={name}
-               onChange={handleNameChange} />
-        <span className={`popup__error ${!!nameErrMsg ? `popup__error_visible` : ``}`}>
-          {nameErrMsg}
-        </span>
+               onChange={handleNameChange}
+               name="name" placeholder="Название"
+               type="text" minLength="2" maxLength="30" required />
+        <span className={`popup__error ${nameErrMsg ? `popup__error_visible` : ``}`}>{nameErrMsg}</span>
       </div>
 
       <div className="popup__field">
-        <input className={`popup__input ${!!linkErrMsg ? `popup__input_type_error` : ``}`}
-               name="link" placeholder="Ссылка на картинку"
-               type="url" required
+        <input className={`popup__input ${linkErrMsg ? `popup__input_type_error` : ``}`}
                value={link}
-               onChange={handleLinkChange} />
-        <span className={!!linkErrMsg ? `popup__error popup__error_visible` : `popup__error` }>
-          {linkErrMsg}
-        </span>
+               onChange={handleLinkChange}
+               name="link" placeholder="Ссылка на картинку"
+               type="url" required />
+        <span className={`popup__error ${linkErrMsg ? `popup__error_visible` : ``}`}>{linkErrMsg}</span>
       </div>
 
     </PopupWithForm>
