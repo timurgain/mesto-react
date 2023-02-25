@@ -4,49 +4,37 @@ import PopupWithForm from "./PopupWithForm.js";
 
 function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
 
-  const [name, setName] = React.useState('');
-  const [nameErrMsg, setNameErrMsg] = React.useState('');
-  const [isNameValid, setIsNameValid] = React.useState(false);
+  const inputs = ['name', 'link']
+  const [saveBtnText, setSaveBtnText] = React.useState('Создать');
 
-  const [link, setLink] = React.useState('');
-  const [linkErrMsg, setLinkErrMsg] = React.useState('');
-  const [isLinkValid, setIsLinkValid] = React.useState(false);
+  const [values, setValues] = React.useState( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) );
+  const [errorMsgs, setErrorMsgs] = React.useState( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) );
+  const [isValid, setIsValid] = React.useState( inputs.reduce((obj, input) => {obj[input] = false; return obj}, {}) );
 
-  const [saveBtnText, setSaveBtnText] = React.useState('Создать')
+  const isFormValid = inputs.every( (input) => isValid[input] === true );
 
-  const isFormValid = isNameValid && isLinkValid
-
-  React.useEffect(() => {
-    setSaveBtnText('Создать');
-    setNameErrMsg('')
-    setLinkErrMsg('')
-  }, [isOpen] )
-
+  function handleChange(evt) {
+    const key = evt.target.name;
+    setValues({...values, [key]: evt.target.value});
+    setErrorMsgs({...errorMsgs, [key]: evt.target.validationMessage});
+    setIsValid({...isValid, [key]: evt.target.validity.valid});
+  }
 
   function handleSubmit(evt) {
-    setSaveBtnText('Сохраняю...')
     evt.preventDefault();
+    setSaveBtnText('Сохраняю...')
+
+    // forwarded the data
     onAddPlace({
-      link: link,
-      name: name
+      link: values.link,
+      name: values.name
     });
-    setLink('');
-    setName('');
-    setIsLinkValid(false);
-    setIsNameValid(false);
-  }
 
-  function handleNameChange(evt) {
-    setName(evt.target.value)
-    setNameErrMsg(evt.target.validationMessage)
-    setIsNameValid(evt.target.validity.valid)
-
-  }
-
-  function handleLinkChange(evt) {
-    setLink(evt.target.value)
-    setLinkErrMsg(evt.target.validationMessage)
-    setIsLinkValid(evt.target.validity.valid)
+    // returned to initial state
+    setSaveBtnText('Создать');
+    setValues( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) );
+    setIsValid( inputs.reduce((obj, input) => {obj[input] = false; return obj}, {}) );
+    setErrorMsgs( inputs.reduce((obj, input) => {obj[input] = ''; return obj}, {}) )
   }
 
   return(
@@ -58,21 +46,21 @@ function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
                    isValid={isFormValid}>
 
       <div className="popup__field">
-        <input className={`popup__input ${nameErrMsg ? `popup__input_type_error` : ``}`}
-               value={name}
-               onChange={handleNameChange}
+        <input className={`popup__input ${errorMsgs.name ? `popup__input_type_error` : ``}`}
+               value={values.name}
+               onChange={handleChange}
                name="name" placeholder="Название"
                type="text" minLength="2" maxLength="30" required />
-        <span className={`popup__error ${nameErrMsg ? `popup__error_visible` : ``}`}>{nameErrMsg}</span>
+        <span className={`popup__error ${errorMsgs.name ? `popup__error_visible` : ``}`}>{errorMsgs.name}</span>
       </div>
 
       <div className="popup__field">
-        <input className={`popup__input ${linkErrMsg ? `popup__input_type_error` : ``}`}
-               value={link}
-               onChange={handleLinkChange}
+        <input className={`popup__input ${errorMsgs.link ? `popup__input_type_error` : ``}`}
+               value={values.link}
+               onChange={handleChange}
                name="link" placeholder="Ссылка на картинку"
                type="url" required />
-        <span className={`popup__error ${linkErrMsg ? `popup__error_visible` : ``}`}>{linkErrMsg}</span>
+        <span className={`popup__error ${errorMsgs.link ? `popup__error_visible` : ``}`}>{errorMsgs.link}</span>
       </div>
 
     </PopupWithForm>
