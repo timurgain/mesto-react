@@ -157,6 +157,7 @@ function App() {
         <PopupWithForm name="confirm" title="Вы уверены?" saveBtnText="Да"
                        isOpen={isConfirmPopupOpen}
                        onSubmit={handleConfirmCardDelete}
+                       isValid={true}
                        onClose={handleClickClose}  />
 
         <Footer />

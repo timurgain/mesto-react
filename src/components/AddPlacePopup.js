@@ -5,10 +5,23 @@ import PopupWithForm from "./PopupWithForm.js";
 function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
 
   const [link, setLink] = React.useState('');
+  const [linkErrMsg, setLinkErrMsg] = React.useState('');
+  const [isLinkValid, setIsLinkValid] = React.useState(false);
+
   const [name, setName] = React.useState('');
+  const [nameErrMsg, setNameErrMsg] = React.useState('');
+  const [isNameValid, setIsNameValid] = React.useState(false);
+
   const [saveBtnText, setSaveBtnText] = React.useState('Создать')
 
-  React.useEffect( () => {setSaveBtnText('Создать')}, [isOpen] )
+  const isFormValid = isLinkValid && isNameValid
+
+  React.useEffect(() => {
+    setSaveBtnText('Создать');
+    setNameErrMsg('')
+    setLinkErrMsg('')
+  }, [isOpen] )
+
 
   function handleSubmit(evt) {
     setSaveBtnText('Сохраняю...')
@@ -19,6 +32,21 @@ function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
     });
     setLink('');
     setName('');
+    setIsLinkValid(false);
+    setIsNameValid(false);
+  }
+
+  function handleNameChange(evt) {
+    setName(evt.target.value)
+    setNameErrMsg(evt.target.validationMessage)
+    setIsNameValid(evt.target.validity.valid)
+
+  }
+
+  function handleLinkChange(evt) {
+    setLink(evt.target.value)
+    setLinkErrMsg(evt.target.validationMessage)
+    setIsLinkValid(evt.target.validity.valid)
   }
 
   return(
@@ -26,22 +54,29 @@ function AddPlacePopup({isOpen, onAddPlace, onClose, ...props}) {
                    saveBtnText={saveBtnText}
                    isOpen={isOpen}
                    onSubmit={handleSubmit}
-                   onClose={onClose}>
+                   onClose={onClose}
+                   isValid={isFormValid}>
 
       <div className="popup__field">
-        <input className="popup__input" name="name" placeholder="Название"
+        <input className={`popup__input ${!!nameErrMsg ? `popup__input_type_error` : ``}`}
+               name="name" placeholder="Название"
                type="text" minLength="2" maxLength="30" required
                value={name}
-               onChange={(evt) => setName(evt.target.value)} />
-        <span className="popup__error"></span>
+               onChange={handleNameChange} />
+        <span className={`popup__error ${!!nameErrMsg ? `popup__error_visible` : ``}`}>
+          {nameErrMsg}
+        </span>
       </div>
 
       <div className="popup__field">
-        <input className="popup__input" name="link" placeholder="Ссылка на картинку"
+        <input className={`popup__input ${!!linkErrMsg ? `popup__input_type_error` : ``}`}
+               name="link" placeholder="Ссылка на картинку"
                type="url" required
                value={link}
-               onChange={(evt) => setLink(evt.target.value)} />
-        <span className="popup__error"></span>
+               onChange={handleLinkChange} />
+        <span className={!!linkErrMsg ? `popup__error popup__error_visible` : `popup__error` }>
+          {linkErrMsg}
+        </span>
       </div>
 
     </PopupWithForm>
