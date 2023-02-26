@@ -1,81 +1,86 @@
-import React from "react"
-import PopupWithForm from "./PopupWithForm"
+import React from "react";
+import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import useFormAndValidation from "../hooks/useFormAndValidation.js";
 
-
-function EditProfilePopup({isOpen, onClose, onUpdateUser, ...props}) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, ...props }) {
   const currentUser = React.useContext(CurrentUserContext);
 
-  const inputs = React.useMemo(() => {return ['name', 'about']}, [])  // usual assignment causes warnings due to useEffect with 'inputs'
-  const [saveBtnText, setSaveBtnText] = React.useState('Сохранить');
-
-  // tried to make state universal with reduce, but it can be easier - {input1: value1, input2: value2}
-  const [values, setValues] = React.useState( inputs.reduce((obj, input) => {return {...obj, [input]: currentUser[input]}}, {}) );
-  const [errorMsgs, setErrorMsgs] = React.useState( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
-  const [isValid, setIsValid] = React.useState( inputs.reduce((obj, input) => {return {...obj, [input]: true}}, {}) );
-
-  const isFormValid = inputs.every( (input) => isValid[input] === true );
+  const [saveBtnText, setSaveBtnText] = React.useState("Сохранить");
+  const { values, errors, isValid, handleChange, resetForm } =
+    useFormAndValidation({ name: currentUser.name, about: currentUser.about });
 
   React.useEffect(() => {
-    setValues( inputs.reduce((obj, input) => {return {...obj, [input]: currentUser[input]}}, {}) );
-    setErrorMsgs( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
-    setIsValid( inputs.reduce((obj, input) => {return {...obj, [input]: true}}, {}) );
-  }, [currentUser, isOpen, inputs])
-
-  function handleChange(evt) {
-    const key = evt.target.name;
-    setValues({...values, [key]: evt.target.value});
-    setErrorMsgs({...errorMsgs, [key]: evt.target.validationMessage});
-    setIsValid({...isValid, [key]: evt.target.validity.valid});
-  }
+    // back to initial state
+    setSaveBtnText("Сохранить");
+    resetForm({ name: currentUser.name, about: currentUser.about });
+  }, [currentUser, isOpen, resetForm]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    setSaveBtnText('Сохраняю...')
-
+    setSaveBtnText("Сохраняю...");
+    console.log(values);
     // forwards the data
-    onUpdateUser({
-      name: values.name,
-      about: values.about
-    });
-
-    // back to initial state
-    setSaveBtnText('Сохранить');
-    setValues( inputs.reduce((obj, input) => {return {...obj, [input]: currentUser[input]}}, {}) );
-    setErrorMsgs( inputs.reduce((obj, input) => {return {...obj, [input]: ''}}, {}) );
-    setIsValid( inputs.reduce((obj, input) => {return {...obj, [input]: true}}, {}) );
+    onUpdateUser(values);
   }
 
-
   return (
-    <PopupWithForm name="profile" title="Редактировать профиль"
-                   saveBtnText={saveBtnText}
-                   isOpen={isOpen}
-                   onSubmit={handleSubmit}
-                   onClose={onClose}
-                   isValid={isFormValid} >
-
+    <PopupWithForm
+      name="profile"
+      title="Редактировать профиль"
+      saveBtnText={saveBtnText}
+      isOpen={isOpen}
+      onSubmit={handleSubmit}
+      onClose={onClose}
+      isValid={isValid}
+    >
       <div className="popup__field">
-        <input className={`popup__input ${errorMsgs.name ? `popup__input_type_error` : ``}`}
-               value={values.name}
-               onChange={handleChange}
-               name="name" placeholder="Название"
-               type="text" minLength="2" maxLength="40" required />
-        <span className={`popup__error ${errorMsgs.name ? `popup__error_visible` : ``}`}>{errorMsgs.name}</span>
+        <input
+          className={`popup__input ${
+            errors.name ? `popup__input_type_error` : ``
+          }`}
+          value={values.name}
+          onChange={handleChange}
+          name="name"
+          placeholder="Название"
+          type="text"
+          minLength="2"
+          maxLength="40"
+          required
+        />
+        <span
+          className={`popup__error ${
+            errors.name ? `popup__error_visible` : ``
+          }`}
+        >
+          {errors.name}
+        </span>
       </div>
 
       <div className="popup__field">
-        <input className={`popup__input ${errorMsgs.about ? `popup__input_type_error` : ``}`}
-               value={values.about}
-               onChange={handleChange}
-               name="about" placeholder="Название"
-               type="text" minLength="2" maxLength="200" required />
-        <span className={`popup__error ${errorMsgs.about ? `popup__error_visible` : ``}`}>{errorMsgs.about}</span>
+        <input
+          className={`popup__input ${
+            errors.about ? `popup__input_type_error` : ``
+          }`}
+          value={values.about}
+          onChange={handleChange}
+          name="about"
+          placeholder="Название"
+          type="text"
+          minLength="2"
+          maxLength="200"
+          required
+        />
+        <span
+          className={`popup__error ${
+            errors.about ? `popup__error_visible` : ``
+          }`}
+        >
+          {errors.about}
+        </span>
       </div>
-
     </PopupWithForm>
-  )
+  );
 }
 
-
-export default EditProfilePopup
+export default EditProfilePopup;
